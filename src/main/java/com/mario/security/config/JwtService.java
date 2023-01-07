@@ -43,6 +43,19 @@ public class JwtService {
 
     }
 
+    public boolean isTokenValid(String token, UserDetails userDetails){
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpried(token);
+    }
+
+    private boolean isTokenExpried(String token) {
+        return extractExpried(token).before(new Date());
+    }
+
+    private Date extractExpried(String token) {
+        return extractClaims(token, Claims::getExpiration);
+    }
+
     private Claims extractAllClaims(String token){
         return Jwts
                 .parserBuilder()
